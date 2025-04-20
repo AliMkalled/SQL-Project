@@ -103,6 +103,61 @@ Here's the breakdown of the most demanded skills for data analysts in 2023:
 - **SQL** and **Excel** remain fundamental, emphasizing the need for strong foundational skills in data processing and spreadsheet manipulation.
 - **Programming** and **Visualization Tools** like **Python**, **Tableau**, and **Power BI** are essential, pointing towards the increasing importance of technical skills in data storytelling and decision support.
 
+### 4. Skills Based on Salary
+Exploring the average salaries associated with different skills revealed which skills are the highest paying.
+
+```sql
+SELECT
+    skills,
+    ROUND(AVG(salary_year_avg), 0) AS avg_salary
+FROM job_postings_fact
+INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
+INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
+WHERE
+    job_title_short = 'Data Analyst' AND
+    salary_year_avg IS NOT NULL AND
+    job_location LIKE '%Canada%'
+GROUP BY
+    skills
+ORDER BY
+    avg_salary DESC
+limit 25
+```
+Here's a breakdown of the results for top paying skills for Data Analysts:
+- **High Demand for Big Data & website based programming Skills**: Top salaries are commanded by analysts skilled in big data technologies (Spark, hadoop), web based programming languages (typescript,javascript), and programming languages (Python, R), reflecting the industry's high valuation of data processing and predictive modeling capabilities.
+- **Cloud Computing Expertise**: Familiarity with cloud and data engineering tools (Databricks, Azure, AWS) underscores the growing importance of cloud-based analytics environments, suggesting that cloud proficiency significantly boosts earning potential in data analytics.
+
+### 5. Most Optimal Skills to Learn
+Combining insights from demand and salary data, this query aimed to pinpoint skills that are both in high demand and have high salaries, offering a strategic focus for skill development. 
+
+```sql
+SELECT
+    skills_dim.skill_id,
+    skills_dim.skills,
+    COUNT(skills_job_dim.job_id) AS demand_count,
+    ROUND(AVG(job_postings_fact.salary_year_avg),0) AS avg_salary
+FROM job_postings_fact
+INNER JOIN skills_job_dim ON job_postings_fact.job_id = skills_job_dim.job_id
+INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
+WHERE
+    job_title_short = 'Data Analyst'
+    AND salary_year_avg IS NOT NULL
+    AND job_location LIKE '%Canada%'
+GROUP BY 
+    skills_dim.skill_id
+HAVING
+    COUNT(skills_job_dim.job_id) > 1
+ORDER BY
+    avg_salary DESC,
+    demand_count DESC
+LIMIT 25
+```
+Here's a breakdown of the most optimal skills for Data Analysts in 2023:
+- **High-Demand Programming Languages**: SQL and Python stand out for their high demand, with demand counts of 16 and 14 respectively. Despite their high demand, their average salaries are around $89,285 for SQL and $92,494 for Python, indicating that proficiency in these languages is highly valued but also widely available.
+- **Business Intelligence and Visualization Tools**: Tableau and Power BI, with demand counts of 9 and 4 respectively, and average salaries around $92,572 and $75,125, highlight the critical role of data visualization and business intelligence in deriving actionable insights from data.
+- **Database Technologies**: The demand for skills in database technologies (Spark, Hadoop) with average salaries ranging from $107,167 and $107,479, reflects the enduring need for data storage, retrieval, and management expertise.
+- **Cloud Tools and Technologies**: Skills in specialized technologies such as BigQuery, and Azure show significant demand with relatively high average salaries, pointing towards the growing importance of cloud platforms and big data technologies in data analysis.
+
 # What I Learned
 Throughout this adventure, I've turbocharged my SQL toolkit with some serious firepower:
 
